@@ -352,7 +352,10 @@ export class InventoryService {
         productId,
         quantity,
       },
-      include: { product: true, shelf: true },
+      include: {
+        product: { include: { categories: true } },
+        shelf: true,
+      },
     });
 
     return {
@@ -367,7 +370,10 @@ export class InventoryService {
   async updateStock(dto: UpdateStockDto) {
     const item = await this.prisma.shelfItem.findUnique({
       where: { id: dto.shelfItemId },
-      include: { product: true, shelf: true },
+      include: {
+        product: { include: { categories: true } },
+        shelf: true,
+      },
     });
 
     if (!item) {
@@ -379,7 +385,10 @@ export class InventoryService {
     const updated = await this.prisma.shelfItem.update({
       where: { id: dto.shelfItemId },
       data: { quantity: dto.newQuantity },
-      include: { product: true, shelf: true },
+      include: {
+        product: { include: { categories: true } },
+        shelf: true,
+      },
     });
 
     return {

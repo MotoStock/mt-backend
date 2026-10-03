@@ -11,13 +11,19 @@ import { Prisma } from '@prisma/client';
 
 const MAX_DEPTH = 4;
 
+const productIncludeCategories = {
+  include: {
+    categories: true,
+  },
+};
+
 /** Recursive include for loading children up to MAX_DEPTH levels */
 function buildChildrenInclude(depth: number): any {
   if (depth <= 0) return false;
   return {
     include: {
       shelfItems: {
-        include: { product: true },
+        include: { product: productIncludeCategories },
         orderBy: { product: { name: 'asc' } },
       },
       children: buildChildrenInclude(depth - 1),
@@ -44,7 +50,7 @@ export class ShelfService {
 
     const include = {
       shelfItems: {
-        include: { product: true },
+        include: { product: productIncludeCategories },
         orderBy: { product: { name: 'asc' } as const },
       },
       children: buildChildrenInclude(MAX_DEPTH - 1),
@@ -103,7 +109,7 @@ export class ShelfService {
 
     const include = {
       shelfItems: {
-        include: { product: true },
+        include: { product: productIncludeCategories },
         orderBy: { product: { name: 'asc' } as const },
       },
       parent: { select: { id: true, locationCode: true } },
@@ -148,7 +154,7 @@ export class ShelfService {
       where: { id },
       include: {
         shelfItems: {
-          include: { product: true },
+          include: { product: productIncludeCategories },
           orderBy: { product: { name: 'asc' } },
         },
         children: buildChildrenInclude(MAX_DEPTH - 1),
@@ -175,7 +181,7 @@ export class ShelfService {
       where: { parentId },
       include: {
         shelfItems: {
-          include: { product: true },
+          include: { product: productIncludeCategories },
           orderBy: { product: { name: 'asc' } },
         },
         children: { select: { id: true } }, // just to know if they have sub-children
@@ -283,7 +289,7 @@ export class ShelfService {
         },
         include: {
           shelfItems: {
-            include: { product: true },
+            include: { product: productIncludeCategories },
           },
           children: true,
           parent: { select: { id: true, locationCode: true } },
